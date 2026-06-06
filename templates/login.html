@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Entrar - MeuLove</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+</head>
+<body>
+
+<section class="criar">
+
+    <form class="form-container" action="/login" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <h2>Entrar</h2>
+        <p>Acesse sua conta para criar sua pagina especial</p>
+
+        <input type="email" name="email" placeholder="Seu e-mail">
+
+        <input type="password" name="password" placeholder="Sua senha">
+
+        <button type="submit">Entrar</button>
+
+        {% if error %}
+        <p class="erro-senha">{{ error }}</p>
+        {% endif %}
+
+        <p class="register-link">
+            <a href="/forgot-password">Esqueci minha senha</a>
+        </p>
+
+        <p class="register-link">
+            Ainda nao tem conta? <a href="/register">Cadastrar</a>
+        </p>
+    </form>
+
+</section>
+
+</body>
+</html>

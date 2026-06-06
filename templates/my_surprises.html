@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minhas Surpresas - MeuLove</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+</head>
+<body>
+
+<main class="admin-page">
+    <div class="admin-header">
+        <h1>Minhas surpresas</h1>
+        <div class="admin-header-actions">
+            <a href="/create">Criar nova</a>
+            <a href="/logout">Sair</a>
+        </div>
+    </div>
+
+    {% if surprises %}
+    <div class="admin-list">
+        {% for surprise in surprises %}
+        <article class="admin-item">
+            <div>
+                <span>#{{ surprise.id }}</span>
+                <h2>{{ surprise.name }}</h2>
+                <p>{{ surprise.message }}</p>
+                <small>Criada em {{ surprise.created_at }}</small>
+            </div>
+
+            <div class="admin-actions">
+                <a href="/surpresa/{{ surprise.code }}" target="_blank" rel="noopener">Abrir</a>
+                <a href="/surprises/{{ surprise.id }}/edit">Editar</a>
+                <button type="button" class="admin-copy" data-link="{{ surprise_links[surprise.code] }}">Copiar link</button>
+                <form action="/surprises/{{ surprise.id }}/delete" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir esta surpresa?');">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="admin-delete">Excluir</button>
+                </form>
+                <code>/surpresa/{{ surprise.code }}</code>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <section class="admin-empty">
+        <h2>Nenhuma surpresa ainda</h2>
+        <p>Crie sua primeira surpresa para ela aparecer aqui.</p>
+    </section>
+    {% endif %}
+</main>
+
+<script>
+    document.querySelectorAll(".admin-copy").forEach((button) => {
+        button.addEventListener("click", async () => {
+            const link = button.dataset.link;
+
+            try {
+                await navigator.clipboard.writeText(link);
+                button.textContent = "Copiado";
+            } catch (error) {
+                prompt("Copie o link:", link);
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,77 @@
+services:
+  - type: web
+    name: meulove
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --workers 2 --timeout 60 app:app
+    disk:
+      name: meulove-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: PUBLIC_BASE_URL
+        sync: false
+      - key: SESSION_COOKIE_SECURE
+        value: "1"
+      - key: MYSQL_HOST
+        sync: false
+      - key: MYSQL_PORT
+        value: "3306"
+      - key: MYSQL_USER
+        sync: false
+      - key: MYSQL_PASSWORD
+        sync: false
+      - key: MYSQL_DATABASE
+        sync: false
+      - key: INIT_DB_ON_STARTUP
+        value: "1"
+      - key: UPLOAD_FOLDER
+        value: /var/data/uploads
+      - key: RATE_LIMIT_BACKEND
+        value: redis
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: meulove-cache
+          property: connectionString
+      - key: MP_ACCESS_TOKEN
+        sync: false
+      - key: MP_WEBHOOK_SECRET
+        sync: false
+      - key: MP_PRODUCT_PRICE
+        value: "19.00"
+      - key: MP_WEBHOOK_TOLERANCE_SECONDS
+        value: "600"
+      - key: PASSWORD_RESET_SECONDS
+        value: "3600"
+      - key: WTF_CSRF_TIME_LIMIT
+        value: "3600"
+      - key: MAX_SURPRISES_PER_USER
+        value: "10"
+      - key: ADMIN_IP_ALLOWLIST
+        sync: false
+      - key: CONTENT_SECURITY_POLICY
+        sync: false
+      - key: ADMIN_PASSWORD_HASH
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USERNAME
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+
+  - type: keyvalue
+    name: meulove-cache
+    plan: free
+    maxmemoryPolicy: allkeys-lru
+    ipAllowList: []

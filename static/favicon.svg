@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="MeuLove">
+  <defs>
+    <linearGradient id="heart" x1="16" y1="12" x2="50" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ff8aa0"/>
+      <stop offset="1" stop-color="#e91e63"/>
+    </linearGradient>
+  </defs>
+  <path
+    d="M32 57C20 47 8 37 8 23c0-8 6-14 14-14 5 0 8 2 10 6 2-4 5-6 10-6 8 0 14 6 14 14 0 14-12 24-24 34Z"
+    fill="url(#heart)"
+    stroke="#9d174d"
+    stroke-width="3"
+    stroke-linejoin="round"/>
+  <text
+    x="32"
+    y="36"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    font-family="Arial Black, Arial, sans-serif"
+    font-size="18"
+    font-weight="900"
+    letter-spacing="-1"
+    fill="#ffffff">ML</text>
+</svg>

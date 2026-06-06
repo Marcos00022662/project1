@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar surpresa</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+
+</head>
+<body>
+
+<section class="criar">
+
+    <form class="form-container" action="/surprises/{{ surprise.id }}/edit" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <h2>Editar surpresa</h2>
+        <p>Atualize os detalhes da sua pagina{% if user %}, {{ user.name }}{% endif %}</p>
+        <p class="register-link">
+            <a href="/minhas-surpresas">Minhas surpresas</a> | <a href="/surpresa/{{ surprise.code }}" target="_blank" rel="noopener">Ver pagina</a>
+        </p>
+
+        <input type="text" id="nome" name="nome" placeholder="Nome da pessoa" value="{{ surprise.name }}">
+
+        <textarea id="mensagem" name="mensagem" placeholder="Sua mensagem...">{{ surprise.message }}</textarea>
+
+        <input type="text" id="musica" name="musica" placeholder="Link da musica (YouTube)" value="{{ surprise.music or '' }}">
+
+        <input type="password" id="senha" name="senha" placeholder="{% if surprise.password %}Nova senha (deixe em branco para manter a atual){% else %}Senha secreta para abrir a surpresa{% endif %}">
+        {% if surprise.password %}
+        <label class="senha-toggle">
+            <input type="checkbox" name="remover_senha" value="1">
+            <span>Remover senha atual</span>
+        </label>
+        {% endif %}
+
+        <div class="form-divider">Linha do tempo</div>
+
+        {% for index in range(3) %}
+        {% set item = timeline[index] if index < timeline|length else none %}
+        <input
+            type="text"
+            id="momento{{ index + 1 }}"
+            name="momento{{ index + 1 }}"
+            placeholder="Momento {{ index + 1 }}"
+            value="{{ item.text if item else '' }}">
+
+        {% if item and item.photo %}
+        <p class="form-hint">Foto atual do momento {{ index + 1 }} salva. Envie outra se quiser trocar.</p>
+        {% endif %}
+
+        <input type="file" id="fotoMomento{{ index + 1 }}" name="fotoMomento{{ index + 1 }}" accept="image/*">
+        {% endfor %}
+
+        <div class="form-divider">Fotos extras</div>
+
+        {% if extra_photos %}
+        <p class="form-hint">{{ extra_photos|length }} foto(s) extra(s) salva(s). Novas fotos serao adicionadas.</p>
+        {% endif %}
+
+        <input type="file" id="fotos" name="fotos" multiple>
+
+        <button type="submit">Salvar alteracoes</button>
+    </form>
+
+</section>
+
+</body>
+</html>

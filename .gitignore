@@ -1,0 +1,14 @@
+.env
+.env.*
+!.env.example
+
+__pycache__/
+*.py[cod]
+.venv/
+.vscode/
+
+database.db
+*.db
+static/uploads/
+*.zip
+*Copia*

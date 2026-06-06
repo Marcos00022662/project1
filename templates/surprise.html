@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if locked %}Surpresa secreta{% else %}Surpresa para {{ surprise.name }}{% endif %}</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+</head>
+<body class="{% if locked %}bloqueado{% else %}desbloqueado{% endif %}">
+
+{% if locked %}
+<section class="tela-senha">
+    <div class="senha-card">
+        <h1>Surpresa secreta</h1>
+        <p>Digite a senha para abrir esta mensagem especial.</p>
+        <input type="password" id="senhaDigitada" placeholder="Senha secreta">
+        <button onclick="desbloquearSurpresa()">Abrir surpresa</button>
+        <p class="erro-senha" id="erroSenha"></p>
+    </div>
+</section>
+{% endif %}
+
+{% if not locked %}
+<main class="conteudo-surpresa">
+    {% set cover = namespace(photo=extra_photos[0] if extra_photos else none) %}
+    {% if not cover.photo and timeline %}
+        {% for item in timeline %}
+            {% if not cover.photo and item.photo %}
+                {% set cover.photo = item.photo %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    <section
+        class="surpresa-hero{% if cover.photo %} surpresa-hero-com-foto{% endif %}"
+        {% if cover.photo %}style="--foto-capa: url('{{ url_for('protected_upload', code=surprise.code, filename=cover.photo.split('/')[-1]) }}');"{% endif %}>
+        <div class="surpresa-hero-inner">
+            <p class="surpresa-label">Para guardar uma historia</p>
+            <h1>{{ surprise.name }}</h1>
+            <p class="surpresa-data">Uma pagina feita so para voce</p>
+        </div>
+    </section>
+
+    <section class="mensagem-card">
+        <p class="carta-label">Uma carta aberta</p>
+        <p class="mensagem">{{ surprise.message }}</p>
+        <p class="carta-assinatura">Com amor.</p>
+    </section>
+
+    {% if extra_photos %}
+    <section class="galeria-section">
+        <p class="section-kicker">Memorias em imagens</p>
+        <h2>Instantes que ficaram</h2>
+        <div class="galeria-surpresa">
+        {% for photo in extra_photos %}
+        <img src="{{ url_for('protected_upload', code=surprise.code, filename=photo.split('/')[-1]) }}" alt="Foto especial {{ loop.index }}">
+        {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if timeline %}
+    <section class="timeline">
+        <p class="section-kicker">Pequenos capitulos</p>
+        <h2>O caminho ate aqui</h2>
+
+        {% for item in timeline %}
+        <div class="timeline-item">
+            <span>Capitulo {{ "%02d"|format(loop.index) }}</span>
+            <div class="timeline-content">
+                {% if item.photo %}
+                <img class="timeline-foto" src="{{ url_for('protected_upload', code=surprise.code, filename=item.photo.split('/')[-1]) }}" alt="Foto do momento {{ loop.index }}">
+                {% endif %}
+
+                {% if item.text %}
+                <p>{{ item.text }}</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </section>
+    {% endif %}
+
+    {% if youtube.embed %}
+    <section class="musica-card">
+        <p class="section-kicker">Trilha sonora</p>
+        <h2>A musica desse sentimento</h2>
+        <iframe
+            src="{{ youtube.embed }}"
+            title="Musica escolhida"
+            loading="lazy"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen>
+        </iframe>
+        <a class="musica-link" href="{{ youtube.watch }}" target="_blank" rel="noopener">Abrir no YouTube</a>
+    </section>
+    {% endif %}
+
+    <section class="share-card">
+        <p>Quando quiser reviver esse carinho, volte para este link.</p>
+        <button type="button" onclick="copiarPagina()">Copiar link</button>
+        <span id="shareFeedback" aria-live="polite"></span>
+    </section>
+</main>
+{% endif %}
+
+{% if not locked %}
+<script>
+    async function copiarPagina() {
+        const feedback = document.getElementById("shareFeedback");
+        try {
+            await navigator.clipboard.writeText(window.location.href);
+            feedback.textContent = "Link copiado.";
+        } catch (e) {
+            prompt("Copie o link:", window.location.href);
+            feedback.textContent = "Link pronto para copiar.";
+        }
+    }
+</script>
+{% endif %}
+
+{% if locked %}
+<script>
+    const surpriseCode = {{ surprise.code|tojson }};
+
+    async function desbloquearSurpresa() {
+        const campo = document.getElementById("senhaDigitada");
+        const erro = document.getElementById("erroSenha");
+        const botao = document.querySelector(".senha-card button");
+        const tentativa = campo ? campo.value.trim() : "";
+
+        if (!tentativa) {
+            erro.textContent = "Digite a senha para continuar.";
+            return;
+        }
+
+        botao.disabled = true;
+        botao.textContent = "Verificando...";
+        erro.textContent = "";
+
+        try {
+            const response = await fetch(`/surpresa/${surpriseCode}/verificar-senha`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": {{ csrf_token()|tojson }}
+                },
+                body: JSON.stringify({ password: tentativa })
+            });
+
+            const data = await response.json();
+
+            if (data.ok) {
+                window.location.reload();
+            } else {
+                erro.textContent = data.error || "Senha incorreta. Tente novamente.";
+                campo.value = "";
+                campo.focus();
+            }
+        } catch (e) {
+            erro.textContent = "Erro ao verificar a senha. Tente novamente.";
+        } finally {
+            botao.disabled = false;
+            botao.textContent = "Abrir surpresa";
+        }
+    }
+
+    document.getElementById("senhaDigitada")?.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") desbloquearSurpresa();
+    });
+</script>
+{% endif %}

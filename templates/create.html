@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Criar sua pagina</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <style>
+        /* ETAPAS */
+        .steps-header {
+            margin-bottom: 28px;
+        }
+ 
+        .steps-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+ 
+        .step-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.35);
+            font-weight: 500;
+            transition: color 0.3s;
+            text-align: center;
+            flex: 1;
+        }
+ 
+        .step-label.ativo {
+            color: var(--cor-principal);
+        }
+ 
+        .step-label.completo {
+            color: rgba(255,255,255,0.6);
+        }
+ 
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.12);
+            border-radius: 99px;
+            overflow: hidden;
+        }
+ 
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cor-principal), var(--cor-secundaria));
+            border-radius: 99px;
+            transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+ 
+        /* PAINÉIS DE ETAPA */
+        .step-panel {
+            display: none;
+            animation: stepIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+ 
+        .step-panel.ativo {
+            display: block;
+        }
+ 
+        @keyframes stepIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+ 
+        /* NAVEGAÇÃO */
+        .step-nav {
+            display: flex;
+            gap: 10px;
+            margin-top: 6px;
+        }
+ 
+        .step-nav .btn-voltar {
+            flex: 1;
+            padding: 14px;
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 50px;
+            background: rgba(255,255,255,0.08);
+            color: #f0b8cb;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.2s;
+        }
+ 
+        .step-nav .btn-voltar:hover {
+            background: rgba(255,255,255,0.14);
+            color: white;
+        }
+ 
+        .step-nav .btn-avancar {
+            flex: 2;
+            padding: 14px;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, var(--cor-principal), var(--cor-secundaria));
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.2s;
+        }
+ 
+        .step-nav .btn-avancar:hover {
+            transform: translateY(-2px);
+        }
+ 
+        .step-nav .btn-avancar:active {
+            transform: translateY(0);
+            opacity: 0.9;
+        }
+ 
+        /* ERRO DE VALIDAÇÃO */
+        .campo-erro {
+            border-color: rgba(255, 100, 100, 0.6) !important;
+            background: rgba(255, 80, 80, 0.08) !important;
+        }
+ 
+        .msg-erro {
+            display: none;
+            color: #ffb3b3;
+            font-size: 13px;
+            text-align: left;
+            margin: -10px 0 12px 4px;
+        }
+ 
+        .msg-erro.visivel {
+            display: block;
+        }
+ 
+        /* TÍTULO DA ETAPA */
+        .step-titulo {
+            font-size: 13px;
+            color: var(--cor-secundaria);
+            font-weight: bold;
+            text-align: left;
+            margin-bottom: 16px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+ 
+        /* SENHA OPCIONAL */
+        .senha-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 14px;
+            cursor: pointer;
+            user-select: none;
+        }
+ 
+        .senha-toggle input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            margin: 0;
+            cursor: pointer;
+            accent-color: var(--cor-principal);
+        }
+ 
+        .senha-toggle span {
+            font-size: 14px;
+            color: #f0b8cb;
+        }
+ 
+        .senha-campo {
+            display: none;
+        }
+ 
+        .senha-campo.visivel {
+            display: block;
+        }
+ 
+        /* CONTADOR DE CARACTERES */
+        .char-count {
+            text-align: right;
+            font-size: 12px;
+            color: rgba(255,255,255,0.3);
+            margin: -10px 0 12px;
+        }
+ 
+        .char-count.limite {
+            color: #ffb3b3;
+        }
+ 
+        /* OPCIONAL TAG */
+        .tag-opcional {
+            font-size: 11px;
+            color: rgba(255,255,255,0.35);
+            font-weight: normal;
+            margin-left: 6px;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+    </style>
+</head>
+<body>
+ 
+<section class="criar">
+    <form class="form-container" action="/surprises" method="POST" enctype="multipart/form-data" id="formCriar">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+ 
+        <h2>Crie sua surpresa</h2>
+        <p>Olá{% if user %}, {{ user.name }}{% endif %}! Vamos criar algo especial 💖</p>
+        <p class="register-link">
+            <a href="/minhas-surpresas">Minhas surpresas</a> | <a href="/logout">Sair</a>
+        </p>
+ 
+        <!-- PROGRESSO -->
+        <div class="steps-header">
+            <div class="steps-labels">
+                <span class="step-label ativo" id="label-1">💬 Mensagem</span>
+                <span class="step-label" id="label-2">📸 Momentos</span>
+                <span class="step-label" id="label-3">🎵 Extras</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 33%"></div>
+            </div>
+        </div>
+ 
+        <!-- ETAPA 1: Nome e Mensagem -->
+        <div class="step-panel ativo" id="step-1">
+            <p class="step-titulo">Quem vai receber?</p>
+ 
+            <input type="text" id="nome" name="nome" placeholder="Nome da pessoa *" maxlength="60">
+            <p class="msg-erro" id="erro-nome">Por favor, escreva o nome da pessoa.</p>
+ 
+            <textarea id="mensagem" name="mensagem" placeholder="Sua mensagem com carinho... *" maxlength="600" oninput="contarChars(this, 'count-mensagem', 600)"></textarea>
+            <p class="char-count" id="count-mensagem">0 / 600</p>
+            <p class="msg-erro" id="erro-mensagem">Escreva uma mensagem especial.</p>
+ 
+            <label class="senha-toggle">
+                <input type="checkbox" id="toggleSenha" onchange="toggleCampoSenha()">
+                <span>🔒 Proteger com senha <span class="tag-opcional">(opcional)</span></span>
+            </label>
+            <div class="senha-campo" id="campSenha">
+                <input type="password" id="senha" name="senha" placeholder="Senha para abrir a surpresa">
+            </div>
+ 
+            <div class="step-nav">
+                <button type="button" class="btn-avancar" onclick="avancar(1)">Avançar →</button>
+            </div>
+        </div>
+ 
+        <!-- ETAPA 2: Linha do tempo -->
+        <div class="step-panel" id="step-2">
+            <p class="step-titulo">Linha do tempo <span class="tag-opcional">— todos opcionais</span></p>
+ 
+            <input type="text" id="momento1" name="momento1" placeholder="Momento 1: Ex. Primeiro encontro" maxlength="80">
+            <input type="file" id="fotoMomento1" name="fotoMomento1" accept="image/*">
+ 
+            <div class="form-divider" style="margin-top:6px"></div>
+ 
+            <input type="text" id="momento2" name="momento2" placeholder="Momento 2: Ex. Nossa primeira viagem" maxlength="80">
+            <input type="file" id="fotoMomento2" name="fotoMomento2" accept="image/*">
+ 
+            <div class="form-divider" style="margin-top:6px"></div>
+ 
+            <input type="text" id="momento3" name="momento3" placeholder="Momento 3: Ex. O dia mais especial" maxlength="80">
+            <input type="file" id="fotoMomento3" name="fotoMomento3" accept="image/*">
+ 
+            <div class="step-nav">
+                <button type="button" class="btn-voltar" onclick="voltar(2)">← Voltar</button>
+                <button type="button" class="btn-avancar" onclick="avancar(2)">Avançar →</button>
+            </div>
+        </div>
+ 
+        <!-- ETAPA 3: Fotos extras e música -->
+        <div class="step-panel" id="step-3">
+            <p class="step-titulo">Toque final <span class="tag-opcional">— todos opcionais</span></p>
+ 
+            <label style="display:block; text-align:left; font-size:13px; color:#f0b8cb; margin-bottom:8px;">
+                Fotos extras da galeria
+            </label>
+            <input type="file" id="fotos" name="fotos" multiple accept="image/*">
+ 
+            <div class="form-divider">Música</div>
+ 
+            <input type="text" id="musica" name="musica" placeholder="Link da música no YouTube">
+            <p class="msg-erro" id="erro-musica">Cole um link válido do YouTube ou deixe em branco.</p>
+ 
+            <div class="step-nav">
+                <button type="button" class="btn-voltar" onclick="voltar(3)">← Voltar</button>
+                <button type="submit" class="btn-avancar" id="btnCriar">Criar surpresa 💖</button>
+            </div>
+        </div>
+ 
+    </form>
+</section>
+ 
+<script>
+    const totalSteps = 3;
+ 
+    function atualizarProgresso(step) {
+        const pct = Math.round((step / totalSteps) * 100);
+        document.getElementById("progressFill").style.width = pct + "%";
+ 
+        for (let i = 1; i <= totalSteps; i++) {
+            const label = document.getElementById("label-" + i);
+            label.classList.remove("ativo", "completo");
+            if (i === step) label.classList.add("ativo");
+            else if (i < step) label.classList.add("completo");
+        }
+    }
+ 
+    function mostrarStep(step) {
+        document.querySelectorAll(".step-panel").forEach(p => p.classList.remove("ativo"));
+        document.getElementById("step-" + step).classList.add("ativo");
+        atualizarProgresso(step);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+ 
+    function limparErro(id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove("visivel");
+    }
+ 
+    function mostrarErro(inputId, erroId) {
+        const input = document.getElementById(inputId);
+        const erro = document.getElementById(erroId);
+        if (input) input.classList.add("campo-erro");
+        if (erro) erro.classList.add("visivel");
+ 
+        if (input) {
+            input.addEventListener("input", () => {
+                input.classList.remove("campo-erro");
+                limparErro(erroId);
+            }, { once: true });
+        }
+    }
+ 
+    function validarYoutube(link) {
+        if (!link) return true;
+        return link.includes("youtube.com") || link.includes("youtu.be");
+    }
+ 
+    function avancar(step) {
+        if (step === 1) {
+            const nome = document.getElementById("nome").value.trim();
+            const mensagem = document.getElementById("mensagem").value.trim();
+            let ok = true;
+ 
+            if (!nome) { mostrarErro("nome", "erro-nome"); ok = false; }
+            if (!mensagem) { mostrarErro("mensagem", "erro-mensagem"); ok = false; }
+ 
+            if (!ok) return;
+        }
+ 
+        if (step === 3) {
+            const musica = document.getElementById("musica").value.trim();
+            if (musica && !validarYoutube(musica)) {
+                mostrarErro("musica", "erro-musica");
+                return;
+            }
+        }
+ 
+        mostrarStep(step + 1);
+    }
+ 
+    function voltar(step) {
+        mostrarStep(step - 1);
+    }
+ 
+    function contarChars(el, countId, max) {
+        const count = el.value.length;
+        const countEl = document.getElementById(countId);
+        countEl.textContent = count + " / " + max;
+        countEl.classList.toggle("limite", count >= max * 0.9);
+    }
+ 
+    function toggleCampoSenha() {
+        const checked = document.getElementById("toggleSenha").checked;
+        const campo = document.getElementById("campSenha");
+        campo.classList.toggle("visivel", checked);
+        if (!checked) document.getElementById("senha").value = "";
+    }
+ 
+    document.getElementById("formCriar").addEventListener("submit", function(e) {
+        const nome = document.getElementById("nome").value.trim();
+        const mensagem = document.getElementById("mensagem").value.trim();
+ 
+        if (!nome || !mensagem) {
+            e.preventDefault();
+            mostrarStep(1);
+            if (!nome) mostrarErro("nome", "erro-nome");
+            if (!mensagem) mostrarErro("mensagem", "erro-mensagem");
+            return;
+        }
+ 
+        const btn = document.getElementById("btnCriar");
+        btn.disabled = true;
+        btn.textContent = "Criando... 💖";
+    });
+</script>
+ 
+</body>
+</html>

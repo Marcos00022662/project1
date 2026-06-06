@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MeuLove 💖</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <style>
+        /* CORAÇÕES FLUTUANTES */
+        .bg-hearts {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .bg-hearts span {
+            position: absolute;
+            bottom: -80px;
+            opacity: 0;
+            animation: floatUp linear infinite;
+        }
+
+        .bg-hearts span:nth-child(1)  { left: 5%;  font-size: 16px; animation-duration: 9s;  animation-delay: 0s;   }
+        .bg-hearts span:nth-child(2)  { left: 15%; font-size: 24px; animation-duration: 11s; animation-delay: 2s;   }
+        .bg-hearts span:nth-child(3)  { left: 25%; font-size: 14px; animation-duration: 8s;  animation-delay: 4s;   }
+        .bg-hearts span:nth-child(4)  { left: 38%; font-size: 20px; animation-duration: 10s; animation-delay: 1s;   }
+        .bg-hearts span:nth-child(5)  { left: 52%; font-size: 18px; animation-duration: 12s; animation-delay: 3s;   }
+        .bg-hearts span:nth-child(6)  { left: 65%; font-size: 26px; animation-duration: 9s;  animation-delay: 5s;   }
+        .bg-hearts span:nth-child(7)  { left: 75%; font-size: 12px; animation-duration: 7s;  animation-delay: 1.5s; }
+        .bg-hearts span:nth-child(8)  { left: 85%; font-size: 22px; animation-duration: 10s; animation-delay: 3.5s; }
+        .bg-hearts span:nth-child(9)  { left: 92%; font-size: 16px; animation-duration: 8s;  animation-delay: 6s;   }
+        .bg-hearts span:nth-child(10) { left: 45%; font-size: 28px; animation-duration: 13s; animation-delay: 2.5s; }
+
+        @keyframes floatUp {
+            0%   { transform: translateY(0) rotate(0deg);       opacity: 0;  }
+            10%  { opacity: 0.12; }
+            90%  { opacity: 0.06; }
+            100% { transform: translateY(-110vh) rotate(20deg); opacity: 0;  }
+        }
+
+        /* NAVBAR */
+        .navbar {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* HERO */
+        .hero {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 60px 24px 80px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            border-radius: 99px;
+            background: rgba(255, 106, 136, 0.15);
+            border: 1px solid rgba(255, 106, 136, 0.3);
+            font-size: 13px;
+            color: var(--cor-secundaria);
+            margin-bottom: 20px;
+            font-weight: 500;
+            animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero h1 {
+            font-size: 52px;
+            line-height: 1.15;
+            margin-bottom: 18px;
+            max-width: 620px;
+            animation: fadeUp 0.6s 0.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(135deg, var(--cor-principal), var(--cor-secundaria));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-desc {
+            color: #f0b8cb;
+            font-size: 17px;
+            line-height: 1.7;
+            max-width: 480px;
+            margin-bottom: 40px;
+            animation: fadeUp 0.6s 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        /* MOCKUP */
+        .hero-mockup {
+            width: 100%;
+            max-width: 360px;
+            margin-bottom: 36px;
+            animation: fadeUp 0.7s 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .mockup-card {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.14);
+            border-radius: 24px;
+            padding: 28px 24px;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,106,136,0.08) inset;
+            backdrop-filter: blur(20px);
+            position: relative;
+            text-align: left;
+        }
+
+        .mockup-card::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: 20px; right: 20px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,106,136,0.5), transparent);
+        }
+
+        .mockup-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 18px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .mockup-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--cor-principal), var(--cor-secundaria));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .mockup-header-text strong {
+            display: block;
+            font-size: 14px;
+            color: white;
+        }
+
+        .mockup-header-text span {
+            font-size: 12px;
+            color: #f0b8cb;
+        }
+
+        .mockup-heart {
+            margin-left: auto;
+            font-size: 20px;
+            animation: heartbeat 2s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            30%       { transform: scale(1.15); }
+            60%       { transform: scale(0.95); }
+        }
+
+        .mockup-msg {
+            font-size: 13px;
+            color: #fff0f5;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .mockup-photos {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .mockup-photo {
+            height: 56px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .mockup-music {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .mockup-music-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff0000, #cc0000);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            flex-shrink: 0;
+            color: white;
+        }
+
+        .mockup-music-text strong {
+            display: block;
+            font-size: 12px;
+            color: white;
+        }
+
+        .mockup-music-text span {
+            font-size: 11px;
+            color: #f0b8cb;
+        }
+
+        .mockup-link {
+            margin-top: 14px;
+            padding: 10px 14px;
+            background: linear-gradient(135deg, rgba(255,106,136,0.2), rgba(255,153,172,0.2));
+            border: 1px solid rgba(255,106,136,0.3);
+            border-radius: 10px;
+            font-size: 12px;
+            color: var(--cor-secundaria);
+            text-align: center;
+            font-weight: 500;
+        }
+
+        /* BOTÃO PRINCIPAL */
+        .btn-main {
+            display: inline-block;
+            padding: 16px 40px;
+            background: linear-gradient(135deg, var(--cor-principal), var(--cor-secundaria));
+            border-radius: 50px;
+            text-decoration: none;
+            color: white;
+            font-weight: 700;
+            font-size: 17px;
+            box-shadow: 0 10px 30px rgba(255, 106, 136, 0.45);
+            transition: 0.3s;
+            animation: fadeUp 0.6s 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .btn-main:hover {
+            transform: translateY(-3px) scale(1.04);
+            box-shadow: 0 16px 40px rgba(255, 106, 136, 0.55);
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 32px;
+            margin-top: 32px;
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: fadeUp 0.6s 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .stat strong {
+            display: block;
+            font-size: 20px;
+            color: white;
+            font-weight: 700;
+        }
+
+        .stat span {
+            font-size: 13px;
+            color: #f0b8cb;
+        }
+
+        /* COMO FUNCIONA e demais seções */
+        .como-funciona,
+        .duvidas {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* RESPONSIVO */
+        @media (max-width: 600px) {
+            .hero h1 {
+                font-size: 34px;
+            }
+
+            .hero-desc {
+                font-size: 15px;
+            }
+
+            .btn-main {
+                font-size: 15px;
+                padding: 14px 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- CORAÇÕES DE FUNDO -->
+<div class="bg-hearts">
+    <span>💖</span>
+    <span>💕</span>
+    <span>💖</span>
+    <span>💗</span>
+    <span>💖</span>
+    <span>💕</span>
+    <span>💖</span>
+    <span>💗</span>
+    <span>💖</span>
+    <span>💕</span>
+</div>
+
+<!-- NAVBAR -->
+<header class="navbar">
+    <div class="logo">💖 MeuLove</div>
+    <nav>
+        <a href="#">Início</a>
+        <a href="#duvidas">Dúvidas</a>
+        <a href="/login">Entrar</a>
+        <a href="/assinatura">Preços</a>
+    </nav>
+    <a href="/register" class="btn-topo">Criar página</a>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-badge">💖 Apenas {{ product_price_label }} — pagamento único</div>
+
+    <h1>
+        Surpreenda quem você<br>
+        <span>ama de verdade</span>
+    </h1>
+
+    <p class="hero-desc">
+        Monte uma página especial com mensagem, fotos e música. Compartilhe o link e veja a reação de quem você ama.
+    </p>
+
+    <!-- MOCKUP -->
+    <div class="hero-mockup">
+        <div class="mockup-card">
+            <div class="mockup-header">
+                <div class="mockup-avatar">💌</div>
+                <div class="mockup-header-text">
+                    <strong>Para: (nome da pessoa)</strong>
+                    <span>surpresa especial</span>
+                </div>
+                <span class="mockup-heart">💖</span>
+            </div>
+            <p class="mockup-msg">
+                "Desde que você entrou na minha vida, tudo ficou mais bonito. Te amo muito..."
+            </p>
+            <div class="mockup-photos">
+                <div class="mockup-photo">🌅</div>
+                <div class="mockup-photo">🌊</div>
+                <div class="mockup-photo">🌸</div>
+            </div>
+            <div class="mockup-music">
+                <div class="mockup-music-icon">▶</div>
+                <div class="mockup-music-text">
+                    <strong>Nossa música</strong>
+                    <span>YouTube</span>
+                </div>
+            </div>
+            <div class="mockup-link">
+                🔗 meulove.com/surpresa/abc123
+            </div>
+        </div>
+    </div>
+
+    <a href="/register" class="btn-main">Criar minha surpresa 💖</a>
+
+    <div class="hero-stats">
+        <div class="stat">
+            <strong>{{ product_price_label }}</strong>
+            <span>Pagamento único</span>
+        </div>
+        <div class="stat">
+            <strong>2 min</strong>
+            <span>Para criar</span>
+        </div>
+        <div class="stat">
+            <strong>💖</strong>
+            <span>Inesquecível</span>
+        </div>
+    </div>
+</section>
+
+<!-- COMO FUNCIONA -->
+<section class="como-funciona">
+    <h2>Como funciona</h2>
+    <div class="passos">
+        <div class="passo">
+            <span>01</span>
+            <h3>Crie sua página</h3>
+            <p>Comece criando uma página especial em poucos cliques.</p>
+        </div>
+        <div class="passo">
+            <span>02</span>
+            <h3>Personalize</h3>
+            <p>Adicione fotos, mensagens e deixe tudo com a sua cara.</p>
+        </div>
+        <div class="passo">
+            <span>03</span>
+            <h3>Compartilhe</h3>
+            <p>Envie o link e surpreenda alguém especial.</p>
+        </div>
+    </div>
+</section>
+
+<!-- DÚVIDAS -->
+<section class="duvidas" id="duvidas">
+    <div class="duvidas-container">
+        <h2>Manual de instruções</h2>
+        <p class="duvidas-intro">
+            Veja como criar e compartilhar sua página especial em poucos passos.
+        </p>
+        <div class="manual-grid">
+            <div class="manual-item">
+                <span>01</span>
+                <h3>Clique em criar página</h3>
+                <p>Use o botão do topo ou o botão principal para abrir o formulário da surpresa.</p>
+            </div>
+            <div class="manual-item">
+                <span>02</span>
+                <h3>Preencha os dados</h3>
+                <p>Coloque o nome da pessoa, escreva sua mensagem e deixe tudo com carinho.</p>
+            </div>
+            <div class="manual-item">
+                <span>03</span>
+                <h3>Adicione música e fotos</h3>
+                <p>Cole o link de uma música do YouTube e selecione as fotos que quer mostrar.</p>
+            </div>
+            <div class="manual-item">
+                <span>04</span>
+                <h3>Gere e compartilhe</h3>
+                <p>Depois de criar, envie o link ou o QR Code para surpreender alguém especial.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>

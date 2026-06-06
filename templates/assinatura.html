@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assinar - MeuLove</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <style>
+        /* CORAÇÕES FLUTUANTES */
+        .bg-hearts {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .bg-hearts span {
+            position: absolute;
+            bottom: -80px;
+            opacity: 0;
+            animation: floatUp linear infinite;
+        }
+
+        .bg-hearts span:nth-child(1)  { left: 5%;  font-size: 16px; animation-duration: 9s;  animation-delay: 0s;   }
+        .bg-hearts span:nth-child(2)  { left: 15%; font-size: 24px; animation-duration: 11s; animation-delay: 2s;   }
+        .bg-hearts span:nth-child(3)  { left: 25%; font-size: 14px; animation-duration: 8s;  animation-delay: 4s;   }
+        .bg-hearts span:nth-child(4)  { left: 38%; font-size: 20px; animation-duration: 10s; animation-delay: 1s;   }
+        .bg-hearts span:nth-child(5)  { left: 52%; font-size: 18px; animation-duration: 12s; animation-delay: 3s;   }
+        .bg-hearts span:nth-child(6)  { left: 65%; font-size: 26px; animation-duration: 9s;  animation-delay: 5s;   }
+        .bg-hearts span:nth-child(7)  { left: 75%; font-size: 12px; animation-duration: 7s;  animation-delay: 1.5s; }
+        .bg-hearts span:nth-child(8)  { left: 85%; font-size: 22px; animation-duration: 10s; animation-delay: 3.5s; }
+        .bg-hearts span:nth-child(9)  { left: 92%; font-size: 16px; animation-duration: 8s;  animation-delay: 6s;   }
+        .bg-hearts span:nth-child(10) { left: 45%; font-size: 28px; animation-duration: 13s; animation-delay: 2.5s; }
+
+        @keyframes floatUp {
+            0%   { transform: translateY(0) rotate(0deg);       opacity: 0;  }
+            10%  { opacity: 0.12; }
+            90%  { opacity: 0.06; }
+            100% { transform: translateY(-110vh) rotate(20deg); opacity: 0;  }
+        }
+
+        /* PÁGINA */
+        .preco-page {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 80px 24px 100px;
+            text-align: center;
+        }
+
+        .preco-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            border-radius: 99px;
+            background: rgba(255, 106, 136, 0.15);
+            border: 1px solid rgba(255, 106, 136, 0.3);
+            font-size: 13px;
+            color: var(--cor-secundaria);
+            margin-bottom: 20px;
+            font-weight: 500;
+            animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .preco-page h1 {
+            font-size: 42px;
+            line-height: 1.2;
+            margin-bottom: 14px;
+            animation: fadeUp 0.6s 0.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .preco-page h1 span {
+            background: linear-gradient(135deg, var(--cor-principal), var(--cor-secundaria));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .preco-desc {
+            color: #f0b8cb;
+            font-size: 16px;
+            line-height: 1.7;
+            max-width: 480px;
+            margin-bottom: 48px;
+            animation: fadeUp 0.6s 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        /* CARD DE PREÇO */
+        .preco-card {
+            width: 100%;
+            max-width: 420px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.14);
+            border-radius: 28px;
+            padding: 40px 36px;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,106,136,0.08) inset;
+            backdrop-filter: blur(20px);
+            position: relative;
+            animation: fadeUp 0.7s 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .preco-card::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: 20px; right: 20px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--cor-principal), transparent);
+            border-radius: 99px;
+        }
+
+        .preco-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 99px;
+            background: linear-gradient(135deg, var(--cor-principal), var(--cor-secundaria));
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .preco-valor {
+            margin-bottom: 8px;
+        }
+
+        .preco-valor strong {
+            font-size: 64px;
+            font-weight: 800;
+            color: white;
+            line-height: 1;
+        }
+
+        .preco-valor sup {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--cor-secundaria);
+            vertical-align: super;
+        }
+
+        .preco-tipo {
+            font-size: 14px;
+            color: #f0b8cb;
+            margin-bottom: 32px;
+        }
+
+        /* LISTA DE FEATURES */
+        .preco-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 36px;
+        }
+
+        .preco-features li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            font-size: 15px;
+            color: #fff0f5;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .preco-features li:last-child {
+            border-bottom: none;
+        }
+
+        .preco-features li span {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        /* BOTÃO */
+        .btn-assinar {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, var(--cor-principal), var(--cor-secundaria));
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            font-family: inherit;
+            text-decoration: none;
+            box-shadow: 0 10px 30px rgba(255, 106, 136, 0.45);
+            transition: 0.3s;
+        }
+
+        .btn-assinar:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 40px rgba(255, 106, 136, 0.55);
+        }
+
+        .btn-assinar:active {
+            transform: translateY(0);
+            opacity: 0.9;
+        }
+
+        .preco-garantia {
+            margin-top: 16px;
+            font-size: 13px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        /* DÚVIDAS */
+        .preco-faq {
+            width: 100%;
+            max-width: 520px;
+            margin-top: 60px;
+            text-align: left;
+            animation: fadeUp 0.6s 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .preco-faq h2 {
+            font-size: 22px;
+            text-align: center;
+            margin-bottom: 24px;
+            color: white;
+        }
+
+        .faq-item {
+            padding: 18px 20px;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 12px;
+        }
+
+        .faq-item strong {
+            display: block;
+            font-size: 15px;
+            color: white;
+            margin-bottom: 6px;
+        }
+
+        .faq-item p {
+            font-size: 14px;
+            color: #f0b8cb;
+            line-height: 1.6;
+        }
+
+        /* VOLTAR */
+        .btn-voltar {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 32px;
+            color: #f0b8cb;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+            animation: fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .btn-voltar:hover {
+            color: white;
+        }
+
+        @media (max-width: 480px) {
+            .preco-page h1 {
+                font-size: 32px;
+            }
+
+            .preco-card {
+                padding: 32px 24px;
+            }
+
+            .preco-valor strong {
+                font-size: 52px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- CORAÇÕES DE FUNDO -->
+<div class="bg-hearts">
+    <span>💖</span>
+    <span>💕</span>
+    <span>💖</span>
+    <span>💗</span>
+    <span>💖</span>
+    <span>💕</span>
+    <span>💖</span>
+    <span>💗</span>
+    <span>💖</span>
+    <span>💕</span>
+</div>
+
+<div class="preco-page">
+
+    <a href="/" class="btn-voltar">← Voltar ao início</a>
+
+    <div class="preco-badge">💖 Pagamento único e seguro</div>
+
+    <h1>Tudo por apenas<br><span>{{ product_price_label }}</span></h1>
+    <p class="preco-desc">
+        Pague uma vez e crie sua página especial com tudo incluído. Sem mensalidade, sem surpresa.
+    </p>
+
+    <div class="preco-card">
+        <div class="preco-tag">✨ Acesso completo</div>
+
+        <div class="preco-valor">
+            <strong>{{ product_price_label }}</strong>
+        </div>
+        <p class="preco-tipo">pagamento único — para sempre</p>
+
+        <ul class="preco-features">
+            <li><span>💬</span> Mensagem personalizada</li>
+            <li><span>📸</span> Galeria de fotos</li>
+            <li><span>🕐</span> Linha do tempo com 3 momentos</li>
+            <li><span>🎵</span> Música do YouTube</li>
+            <li><span>🔒</span> Senha para proteger a surpresa</li>
+            <li><span>📱</span> QR Code para compartilhar</li>
+            <li><span>🔗</span> Link vitalício</li>
+            <li><span>✏️</span> Edição a qualquer momento</li>
+        </ul>
+
+        {% if user %}
+        <form action="/checkout" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn-assinar">Liberar criação 💖</button>
+        </form>
+        {% else %}
+        <a href="/register" class="btn-assinar">Criar minha surpresa 💖</a>
+        {% endif %}
+        <p class="preco-garantia">🔐 Pagamento seguro via PIX</p>
+    </div>
+
+    <div class="preco-faq">
+        <h2>Dúvidas frequentes</h2>
+
+        <div class="faq-item">
+            <strong>Preciso pagar todo mês?</strong>
+            <p>Não! É um pagamento único de {{ product_price_label }}. Você cria sua página e ela fica no ar para sempre.</p>
+        </div>
+
+        <div class="faq-item">
+            <strong>Como funciona o pagamento?</strong>
+            <p>O pagamento é feito via PIX, de forma rápida e segura. Após confirmar, você já pode criar sua surpresa.</p>
+        </div>
+
+        <div class="faq-item">
+            <strong>Posso editar depois de criar?</strong>
+            <p>Sim! Você pode editar sua página a qualquer momento — trocar fotos, atualizar a mensagem e muito mais.</p>
+        </div>
+
+        <div class="faq-item">
+            <strong>O link expira?</strong>
+            <p>Não. O link da sua surpresa é vitalício — fica disponível para sempre após o pagamento.</p>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - MeuLove</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+</head>
+<body>
+
+<main class="admin-page">
+    <div class="admin-header">
+        <div>
+            <h1>Surpresas cadastradas</h1>
+            <p class="admin-count">
+                {% if total %}
+                Mostrando {{ start_index }}-{{ end_index }} de {{ total }}
+                {% else %}
+                Nenhuma surpresa cadastrada
+                {% endif %}
+            </p>
+        </div>
+        <div class="admin-header-actions">
+            <a href="/create">Criar nova</a>
+            <a href="/admin/logout">Sair</a>
+        </div>
+    </div>
+
+    {% if surprises %}
+    <div class="admin-list">
+        {% for surprise in surprises %}
+        <article class="admin-item">
+            <div>
+                <span>#{{ surprise.id }}</span>
+                <h2>{{ surprise.name }}</h2>
+                <p>{{ surprise.message }}</p>
+                <small>Criada em {{ surprise.created_at }}</small>
+                {% if surprise.user_name %}
+                <small>Usuario: {{ surprise.user_name }} - {{ surprise.user_email }}</small>
+                {% else %}
+                <small>Usuario: sem conta vinculada</small>
+                {% endif %}
+            </div>
+
+            <div class="admin-actions">
+                <a href="/surpresa/{{ surprise.code }}" target="_blank" rel="noopener">Abrir</a>
+                <code>/surpresa/{{ surprise.code }}</code>
+                {% if surprise.password %}
+                <strong>Com senha</strong>
+                {% else %}
+                <strong>Sem senha</strong>
+                {% endif %}
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+
+    {% if total_pages > 1 %}
+    <nav class="admin-pagination" aria-label="Paginacao do admin">
+        {% if page > 1 %}
+        <a href="{{ url_for('admin', page=page - 1) }}">Anterior</a>
+        {% else %}
+        <span>Anterior</span>
+        {% endif %}
+
+        <strong>Pagina {{ page }} de {{ total_pages }}</strong>
+
+        {% if page < total_pages %}
+        <a href="{{ url_for('admin', page=page + 1) }}">Proxima</a>
+        {% else %}
+        <span>Proxima</span>
+        {% endif %}
+    </nav>
+    {% endif %}
+    {% else %}
+    <section class="admin-empty">
+        <h2>Nenhuma surpresa ainda</h2>
+        <p>Quando uma surpresa for criada, ela vai aparecer aqui.</p>
+    </section>
+    {% endif %}
+</main>
+
+</body>
+</html>

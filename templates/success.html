@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surpresa criada! - MeuLove</title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        :root {
+            --cor-principal: #ff6a88;
+            --cor-secundaria: #ff99ac;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #4A102A, #2D145F);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            overflow-x: hidden;
+        }
+
+        /* CONFETTI */
+        .confetti-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            top: -20px;
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            animation: confettiFall linear forwards;
+        }
+
+        @keyframes confettiFall {
+            0%   { transform: translateY(0) rotate(0deg);   opacity: 1; }
+            100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* CARD */
+        .card {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 520px;
+            width: 100%;
+            padding: 48px 40px;
+            border-radius: 28px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.14);
+            box-shadow: 0 24px 60px rgba(0,0,0,0.45);
+            backdrop-filter: blur(20px);
+            animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(40px) scale(0.97); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* EMOJI */
+        .emoji-success {
+            font-size: 64px;
+            display: block;
+            margin-bottom: 16px;
+            animation: pop 0.5s 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        @keyframes pop {
+            from { transform: scale(0); opacity: 0; }
+            to   { transform: scale(1); opacity: 1; }
+        }
+
+        h1 {
+            font-size: 26px;
+            margin-bottom: 8px;
+            animation: fadeUp 0.5s 0.2s both;
+        }
+
+        .subtitulo {
+            color: #f0b8cb;
+            font-size: 15px;
+            margin-bottom: 32px;
+            line-height: 1.6;
+            animation: fadeUp 0.5s 0.3s both;
+        }
+
+        /* LINK */
+        .link-section {
+            margin-bottom: 28px;
+            animation: fadeUp 0.5s 0.4s both;
+        }
+
+        .link-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.45);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 10px;
+        }
+
+        .link-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.16);
+            border-radius: 14px;
+            padding: 12px 16px;
+        }
+
+        .link-box span {
+            flex: 1;
+            font-size: 14px;
+            color: #f0b8cb;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-align: left;
+        }
+
+        .btn-copiar {
+            flex-shrink: 0;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 99px;
+            background: linear-gradient(135deg, var(--cor-principal), var(--cor-secundaria));
+            color: white;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-copiar:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-copiar.copiado {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* QR CODE */
+        .qr-section {
+            margin-bottom: 32px;
+            animation: fadeUp 0.5s 0.5s both;
+        }
+
+        .qr-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.45);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 14px;
+        }
+
+        .qr-wrapper {
+            display: inline-block;
+            padding: 16px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+
+        #qrcode canvas,
+        #qrcode img {
+            display: block;
+        }
+
+        .btn-baixar-qr {
+            display: inline-block;
+            margin-top: 12px;
+            font-size: 13px;
+            color: #f0b8cb;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-family: inherit;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .btn-baixar-qr:hover {
+            color: white;
+        }
+
+        /* AÇÕES */
+        .acoes {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            animation: fadeUp 0.5s 0.6s both;
+        }
+
+        .btn-abrir {
+            display: block;
+            padding: 14px 28px;
+            border-radius: 50px;
+            background: linear-gradient(135deg, var(--cor-principal), var(--cor-secundaria));
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+            text-decoration: none;
+            box-shadow: 0 8px 24px rgba(255,106,136,0.4);
+            transition: 0.25s;
+        }
+
+        .btn-abrir:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 32px rgba(255,106,136,0.5);
+        }
+
+        .btn-minhas {
+            display: block;
+            padding: 13px 28px;
+            border-radius: 50px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.18);
+            color: #f0b8cb;
+            font-size: 15px;
+            text-decoration: none;
+            transition: 0.25s;
+        }
+
+        .btn-minhas:hover {
+            background: rgba(255,255,255,0.14);
+            color: white;
+        }
+
+        /* DIVISOR */
+        .divisor {
+            width: 48px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--cor-principal), transparent);
+            margin: 0 auto 28px;
+            animation: fadeUp 0.5s 0.35s both;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 36px 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .emoji-success {
+                font-size: 52px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="confetti-container" id="confetti"></div>
+
+<div class="card">
+    <span class="emoji-success">🎉</span>
+    <h1>Surpresa criada com sucesso!</h1>
+    <div class="divisor"></div>
+    <p class="subtitulo">
+        Sua página especial para <strong>{{ surprise.name }}</strong> está pronta.<br>
+        Compartilhe o link e surpreenda quem você ama 💖
+    </p>
+
+    <!-- LINK -->
+    <div class="link-section">
+        <p class="link-label">Link da surpresa</p>
+        <div class="link-box">
+            <span id="linkTexto">{{ url }}</span>
+            <button class="btn-copiar" id="btnCopiar" onclick="copiarLink()">Copiar</button>
+        </div>
+    </div>
+
+    <!-- QR CODE -->
+    <div class="qr-section">
+        <p class="qr-label">QR Code</p>
+        <div class="qr-wrapper">
+            <div id="qrcode"></div>
+        </div>
+        <br>
+        <button class="btn-baixar-qr" onclick="baixarQR()">⬇ Baixar QR Code</button>
+    </div>
+
+    <!-- AÇÕES -->
+    <div class="acoes">
+        <a href="{{ url }}" target="_blank" rel="noopener" class="btn-abrir">Ver minha surpresa 💖</a>
+        <a href="/minhas-surpresas" class="btn-minhas">Minhas surpresas</a>
+    </div>
+</div>
+
+<script>
+    const linkSurpresa = {{ url|tojson }};
+
+    // Gera QR Code
+    const qr = new QRCode(document.getElementById("qrcode"), {
+        text: linkSurpresa,
+        width: 180,
+        height: 180,
+        colorDark: "#2D145F",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+    });
+
+    // Copiar link
+    async function copiarLink() {
+        const btn = document.getElementById("btnCopiar");
+        try {
+            await navigator.clipboard.writeText(linkSurpresa);
+            btn.textContent = "Copiado ✓";
+            btn.classList.add("copiado");
+            setTimeout(() => {
+                btn.textContent = "Copiar";
+                btn.classList.remove("copiado");
+            }, 2500);
+        } catch (e) {
+            prompt("Copie o link:", linkSurpresa);
+        }
+    }
+
+    // Baixar QR Code
+    function baixarQR() {
+        const canvas = document.querySelector("#qrcode canvas");
+        if (!canvas) return;
+        const link = document.createElement("a");
+        link.download = "qrcode-surpresa.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+    }
+
+    // Confetti
+    const cores = ["#ff6a88", "#ff99ac", "#ffffff", "#ffccd5", "#c084fc", "#f9a8d4"];
+    const container = document.getElementById("confetti");
+
+    for (let i = 0; i < 60; i++) {
+        const piece = document.createElement("div");
+        piece.className = "confetti-piece";
+        piece.style.left = Math.random() * 100 + "vw";
+        piece.style.width = (Math.random() * 8 + 6) + "px";
+        piece.style.height = (Math.random() * 8 + 6) + "px";
+        piece.style.background = cores[Math.floor(Math.random() * cores.length)];
+        piece.style.borderRadius = Math.random() > 0.5 ? "50%" : "2px";
+        piece.style.animationDuration = (Math.random() * 2 + 2) + "s";
+        piece.style.animationDelay = (Math.random() * 2) + "s";
+        container.appendChild(piece);
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Entrar</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<section class="criar">
+    <form class="form-container" action="/admin/login" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <h2>Admin</h2>
+        <p>Digite a senha para acessar as surpresas cadastradas.</p>
+
+        <input type="password" name="password" placeholder="Senha do admin">
+
+        <button type="submit">Entrar</button>
+
+        {% if error %}
+        <p class="erro-senha">{{ error }}</p>
+        {% endif %}
+    </form>
+</section>
+
+</body>
+</html>
